@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake Game</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<h1>Snake Game</h1>
+
+<div class="game-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button id="toggleSidebar">☰ Settings</button>
+        <div class="sidebar-content" id="sidebarContent">
+            <h2>Settings</h2>
+            <label>
+                Speed: <input type="range" id="speedSlider" min="1" max="15" value="5">
+            </label>
+            <label>
+                Snake Color: <input type="color" id="snakeColor" value="#0f0">
+            </label>
+            <label>
+                <input type="checkbox" id="gridToggle"> Show Grid
+            </label>
+            <h3>Game Mode</h3>
+            <select id="gameMode">
+                <option value="classic">Classic</option>
+                <option value="wrap">Wraparound</option>
+            </select>
+            <button id="pauseBtn">Pause</button>
+            <h3>How to Play</h3>
+            <p>Use arrow keys or touch arrows. Eat food to grow. Avoid collisions in Classic mode.</p>
+            <h3>Credits</h3>
+            <p>Written by Xlewis1 in JS, CSS & HTML.<br>Check out my other games on GitHub!</p>
+        </div>
+    </div>
+
+    <!-- Game Canvas -->
+    <div class="canvas-container">
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+        <div class="touch-controls">
+            <button class="touch-btn" data-dir="up">↑</button>
+            <div class="horizontal-btns">
+                <button class="touch-btn" data-dir="left">←</button>
+                <button class="touch-btn" data-dir="down">↓</button>
+                <button class="touch-btn" data-dir="right">→</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>
