@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let direction = { x: 1, y: 0 };
     let food = { x: 0, y: 0 };
     let score = 0;
+    let highScore = localStorage.getItem('snakeHighScore') || 0;
     let isPaused = false;
     const defaultSnakeColor = '#0f0';
     let currentSpeed = parseInt(speedSlider.value, 10);
@@ -97,6 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (head.x === food.x && head.y === food.y) {
             score++;
             spawnFood();
+            
+            const savedHighScore = parseInt(localStorage.getItem('highScore')) || 0;
+            if (score > savedHighScore) {
+                localStorage.setItem('highScore', score);
+           }
+            
         } else {
             snake.pop();
         }
@@ -190,6 +197,10 @@ function pollGamePads() {
         ctx.font = '20px Arial';
         ctx.fillText(`Score: ${score}`, 10, 25);
     }
+
+    // display high score
+    const highScore = parseInt(localStorage.getItem('highScore')) || 0;
+     ctx.fillText(`High Score: ${highScore}`, 10, 50);
 
     let lastTime = 0;
     function gameLoop(time) {
