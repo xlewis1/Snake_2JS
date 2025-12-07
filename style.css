@@ -6,9 +6,9 @@ body {
     text-align: center;
 }
 
-h1 {
+.game-title {
+    color: #0f0 !important; /* Forces green even if other rules override */
     margin: 10px 0;
-    color: #0f0;
 }
 
 .game-container {
