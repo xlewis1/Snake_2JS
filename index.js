@@ -45,6 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
         snakeHasOutline = outlineToggle.checked;
     });
 
+    window.addEventListener("gamepadconnected", (e) => {
+    console.log("Gamepad connected:", e.gamepad.id);
+  });
+
     // --- Game init ---
     function init() {
         snake = [];
@@ -92,6 +96,35 @@ document.addEventListener('DOMContentLoaded', () => {
             snake.pop();
         }
     }
+
+    window.addEventListener("gamepadconnected", (e) => {
+  console.log("Gamepad connected:", e.gamepad.id);
+});
+
+// In your game loop (or a separate polling function)
+function pollGamePads() {
+  const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+  for (const gp of gamepads) {
+    if (!gp) continue;
+
+    // Example: assuming standard layout
+    // D‑pad buttons are indices 12 (up), 13 (down), 14 (left), 15 (right)
+    if (gp.buttons[12].pressed) { direction = { x: 0, y: -1 }; }
+    if (gp.buttons[13].pressed) { direction = { x: 0, y: 1 }; }
+    if (gp.buttons[14].pressed) { direction = { x: -1, y: 0 }; }
+    if (gp.buttons[15].pressed) { direction = { x: 1, y: 0 }; }
+
+    // Example: maybe 'A' button (index 0) = pause
+    if (gp.buttons[0].pressed) {
+      pauseGame();
+    }
+  }
+}
+
+    function pauseGame() {
+    isPaused = !isPaused;
+    pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+}
 
     function draw() {
         ctx.fillStyle = '#111';
@@ -147,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function gameLoop(time) {
         if (!isPaused && time - lastTime >= 1000 / currentSpeed) {
             lastTime = time;
+            pollGamePads();
             update();
             draw();
         }
