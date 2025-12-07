@@ -196,11 +196,12 @@ function pollGamePads() {
         ctx.fillStyle = '#fff';
         ctx.font = '20px Arial';
         ctx.fillText(`Score: ${score}`, 10, 25);
-    }
+    
 
-    // display high score
-    const highScore = parseInt(localStorage.getItem('highScore')) || 0;
-     ctx.fillText(`High Score: ${highScore}`, 10, 50);
+       // display high score
+       const highScore = parseInt(localStorage.getItem('highScore')) || 0;
+       ctx.fillText(`High Score: ${highScore}`, 10, 50);
+    } 
 
     let lastTime = 0;
     function gameLoop(time) {
