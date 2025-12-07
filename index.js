@@ -167,8 +167,18 @@ function pollGamePads() {
          });
 
         // food
-        ctx.fillStyle = '#f00';
-        ctx.fillRect(food.x * scale, food.y * scale, scale, scale);
+      const foodX = food.x * scale;
+      const foodY = food.y * scale;
+      const selectedShape = document.querySelector('input[name="foodShape"]:checked').value;
+      ctx.fillStyle = document.getElementById('foodColor').value || '#f00';
+
+      if (selectedShape === 'square') {
+          ctx.fillRect(foodX, foodY, scale, scale);
+      } else if (selectedShape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(foodX + scale/2, foodY + scale/2, scale/2, 0, Math.PI * 2);
+          ctx.fill();
+      }
 
         // score
         ctx.fillStyle = '#fff';
