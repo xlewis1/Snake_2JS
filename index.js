@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const outlineToggle = document.getElementById("outlineToggle");
     const foodColorPicker = document.getElementById('foodColor');
     const foodShapeRadios = document.querySelectorAll('input[name="foodShape"]');
+    const snakeTheme = new Audio('snaketheme.mp3');
+    snakeTheme.loop = true;
 
     foodColorPicker.addEventListener('input', draw);
     foodShapeRadios.forEach(radio => radio.addEventListener('change', draw));
@@ -64,6 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
         spawnFood();
         score = 0;
         direction = { x: 1, y: 0 };
+
+        snakeTheme.play().catch(() => {
+          console.log("Audio play prevented, maybe user interaction is needed first");
+        });
+        
         window.requestAnimationFrame(gameLoop);
     }
 
@@ -136,6 +143,12 @@ function pollGamePads() {
     function pauseGame() {
     isPaused = !isPaused;
     pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+
+    if (isPaused) {
+        snakeTheme.pause();
+    } else {
+        snakeTheme.play();
+    } 
 }
 
     function draw() {
