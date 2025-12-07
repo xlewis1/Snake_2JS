@@ -153,31 +153,43 @@ document.addEventListener('DOMContentLoaded', () => {
         window.requestAnimationFrame(gameLoop);
     }
 
-    // --- Keyboard ---
     window.addEventListener('keydown', e => {
-        switch (e.key) {
-            case 'ArrowUp':
-            case 'w': 
-                if (direction.y === 0) direction = { x: 0, y: -1 }; 
-                e.preventDefault();
-                break;
-            case 'ArrowDown':
-            case 's':
-                if (direction.y === 0) direction = { x: 0, y: 1 }; 
-                e.preventDefault();
-                break;           
-            case 'ArrowLeft':
-            case 'a': 
-                if (direction.x === 0) direction = { x: -1, y: 0 }; 
-                e.preventDefault();
-                break;
-            case 'ArrowRight':
-            case 'd': 
-                if (direction.x === 0) direction = { x: 1, y: 0 }; 
-                e.preventDefault();
-                break;
-        }
-    });
+    switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'Up': // some remotes use 'Up'
+        case '38': // numeric keyCode fallback
+            if (direction.y === 0) direction = { x: 0, y: -1 };
+            e.preventDefault();
+            break;
+        case 'ArrowDown':
+        case 's':
+        case 'Down':
+        case '40':
+            if (direction.y === 0) direction = { x: 0, y: 1 };
+            e.preventDefault();
+            break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'Left':
+        case '37':
+            if (direction.x === 0) direction = { x: -1, y: 0 };
+            e.preventDefault();
+            break;
+        case 'ArrowRight':
+        case 'd':
+        case 'Right':
+        case '39':
+            if (direction.x === 0) direction = { x: 1, y: 0 };
+            e.preventDefault();
+            break;
+        case 'Enter':
+        case '13': // pause/resume or selection
+            pauseBtn.click();
+            e.preventDefault();
+            break;
+    }
+});
 
     // --- Touch ---
     touchBtns.forEach(btn => {
