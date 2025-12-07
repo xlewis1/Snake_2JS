@@ -198,8 +198,10 @@ function pollGamePads() {
         ctx.fillText(`Score: ${score}`, 10, 25);
     
 
-       // display high score
-       ctx.fillText(`High Score: ${highScore}`, 10, 50);
+       ctx.fillStyle = 'yellow';
+       ctx.textAlign = 'right';
+       ctx.fillText(`High Score: ${highScore}`, canvas.width -10, 25);
+       ctx.textAlign = 'start';
     } 
 
     let lastTime = 0;
