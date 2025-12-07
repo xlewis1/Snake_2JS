@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const foodShapeRadios = document.querySelectorAll('input[name="foodShape"]');
     const snakeTheme = new Audio('snaketheme.mp3');
     snakeTheme.loop = true;
+    const muteBtn = document.getElementById('muteBtn');
 
     foodColorPicker.addEventListener('input', draw);
     foodShapeRadios.forEach(radio => radio.addEventListener('change', draw));
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const defaultSnakeColor = '#0f0';
     let currentSpeed = parseInt(speedSlider.value, 10);
     let snakeHasOutline = outlineToggle.checked;
+    let isMuted = false;
 
     // --- Sidebar toggle ---
     toggleSidebarBtn.addEventListener('click', () => {
@@ -42,6 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
     pauseBtn.addEventListener('click', () => {
         isPaused = !isPaused;
         pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+    });
+
+    muteBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        snakeTheme.muted = isMuted;
+        muteBtn.textContent = isMuted ? 'Unmute' : 'Mute';
     });
 
     // --- Speed slider ---
