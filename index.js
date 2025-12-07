@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pauseBtn = document.getElementById('pauseBtn');
     const toggleSidebarBtn = document.getElementById('toggleSidebar');
     const sidebarContent = document.getElementById('sidebarContent');
+    const outlineToggle = document.getElementById("outlineToggle");
 
     const scale = 25;
     const rows = canvas.height / scale;
@@ -22,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isPaused = false;
     const defaultSnakeColor = '#0f0';
     let currentSpeed = parseInt(speedSlider.value, 10);
+    let snakeHasOutline = outlineToggle.checked;
 
     // --- Sidebar toggle ---
     toggleSidebarBtn.addEventListener('click', () => {
@@ -37,6 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Speed slider ---
     speedSlider.addEventListener('input', () => {
         currentSpeed = parseInt(speedSlider.value, 10);
+    });
+
+    outlineToggle.addEventListener("change", () => {
+        snakeHasOutline = outlineToggle.checked;
     });
 
     // --- Game init ---
@@ -110,7 +116,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // snake
         ctx.fillStyle = snakeColorPicker.value || defaultSnakeColor;
-        snake.forEach(seg => ctx.fillRect(seg.x * scale, seg.y * scale, scale, scale));
+
+        
+       snake.forEach(seg => {
+            const x = seg.x * scale;
+            const y = seg.y * scale;
+
+           // fill
+           ctx.fillRect(x, y, scale, scale);
+
+           // outline (only if toggle is ON)
+           if (outlineToggle.checked) {
+               ctx.strokeStyle = "black";
+               ctx.lineWidth = 2;
+               ctx.strokeRect(x + 0.5, y + 0.5, scale - 1, scale - 1);
+            }
+         });
 
         // food
         ctx.fillStyle = '#f00';
