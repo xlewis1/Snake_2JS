@@ -10,7 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleSidebarBtn = document.getElementById('toggleSidebar');
     const sidebarContent = document.getElementById('sidebarContent');
     const outlineToggle = document.getElementById("outlineToggle");
+    const foodColorPicker = document.getElementById('foodColor');
+    const foodShapeRadios = document.querySelectorAll('input[name="foodShape"]');
 
+    foodColorPicker.addEventListener('input', draw);
+    foodShapeRadios.forEach(radio => radio.addEventListener('change', draw));
+    
     const scale = 25;
     const rows = canvas.height / scale;
     const columns = canvas.width / scale;
