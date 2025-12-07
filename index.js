@@ -157,13 +157,25 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('keydown', e => {
         switch (e.key) {
             case 'ArrowUp':
-            case 'w': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
+            case 'w': 
+                if (direction.y === 0) direction = { x: 0, y: -1 }; 
+                e.preventDefault();
+                break;
             case 'ArrowDown':
-            case 's': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
+            case 's':
+                if (direction.y === 0) direction = { x: 0, y: 1 }; 
+                e.preventDefault();
+                break;           
             case 'ArrowLeft':
-            case 'a': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
+            case 'a': 
+                if (direction.x === 0) direction = { x: -1, y: 0 }; 
+                e.preventDefault();
+                break;
             case 'ArrowRight':
-            case 'd': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
+            case 'd': 
+                if (direction.x === 0) direction = { x: 1, y: 0 }; 
+                e.preventDefault();
+                break;
         }
     });
 
