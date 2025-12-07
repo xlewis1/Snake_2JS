@@ -1,6 +1,6 @@
 # Snake Game 🐍
 
-This is the **first Snake game** I’ve created! It’s fully playable on **mobile, tablet, and desktop** devices. Whether you’re on a phone, iPad, laptop, or PC, the game adjusts and gives you a smooth experience.  
+This is the **first Snake game** I’ve created thats fully web app friendly! It’s fully playable on **mobile, tablet, and desktop** devices. Whether you’re on a phone, iPad, laptop, or PC, the game adjusts and gives you a smooth experience.  
 
 ## Features
 
