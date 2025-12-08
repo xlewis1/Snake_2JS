@@ -123,6 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         snakeTheme.play().catch(() => console.log("Audio play prevented."));
 
         lastUpdateTime = performance.now();
+        draw();
         window.requestAnimationFrame(gameLoop);
     }
 
@@ -192,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Snake
-        let snakeColor = currentTheme.snake || snakeColorPicker.value || "#0f0';
+        let snakeColor = currentTheme.snake || snakeColorPicker.value || "#0f0";
         if (themeSelect.value === 'rainbow') snakeColor = `hsl(${rainbowHue}, 100%, 50%)`;
         ctx.fillStyle = snakeColor;
         snake.forEach(seg => {
