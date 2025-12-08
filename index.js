@@ -93,7 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
         snakeTheme.play().catch(() => {
           console.log("Audio play prevented, maybe user interaction is needed first");
         });
-        
+
+        draw();
         window.requestAnimationFrame(gameLoop);
     }
 
