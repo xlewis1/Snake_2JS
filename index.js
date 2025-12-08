@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
     snakeTheme.loop = true;
 
     const scale = 25;
-    const rows = Math.floor(canvas.height / scale);
-    const columns = Math.floor(canvas.width / scale);
+    const rows = canvas.height / scale;
+    const columns = canvas.width / scale;
 
     const themes = {
         default: { bg: '#111', snake: '#0f0', food: '#f00', grid: '#333' },
-        neon: { bg: '#030003', snake: '#00ffdd', food: '#ff00aa', grid: '#005577' },
+        neon: { bg: '#030003', snake: '#0f0', food: '#f00', grid: '#005577' },
         rainbow: { bg: '#fff', snake: null, food: null, grid: '#444' },
-        nokia: { bg: '#C0FFC0', snake: '#000000', food: '#000000', grid: null }
+        nokia: {bg: '#C0FFC0', snake: '#000000', food: '#000000', grid: null}   
     };
 
     let snake = [];
@@ -40,35 +40,63 @@ document.addEventListener('DOMContentLoaded', () => {
     let snakeHasOutline = outlineToggle.checked;
     let isMuted = false;
     let currentTheme = themes.default;
-    let rainbowHue = 0;
+    let pulsePhase = 0; // for pulse animation
     let lastUpdateTime = 0;
 
     // --- Event Listeners ---
-    toggleSidebarBtn.addEventListener('click', () => sidebarContent.classList.toggle('show'));
+    toggleSidebarBtn.addEventListener('click', () => {
+        sidebarContent.classList.toggle('show');
+    });
 
-    pauseBtn.addEventListener('click', pauseGame);
+    pauseBtn.addEventListener('click', () => pauseGame());
     muteBtn.addEventListener('click', () => {
         isMuted = !isMuted;
         snakeTheme.muted = isMuted;
         muteBtn.textContent = isMuted ? 'Unmute' : 'Mute';
     });
 
-    speedSlider.addEventListener('input', () => currentSpeed = parseInt(speedSlider.value, 10));
-    outlineToggle.addEventListener("change", () => snakeHasOutline = outlineToggle.checked);
+    speedSlider.addEventListener('input', () => {
+        currentSpeed = parseInt(speedSlider.value, 10);
+    });
+
+    outlineToggle.addEventListener("change", () => {
+        snakeHasOutline = outlineToggle.checked;
+    });
+
     themeSelect.addEventListener('change', () => {
         currentTheme = themes[themeSelect.value];
         draw();
     });
+
     foodColorPicker.addEventListener('input', draw);
     foodShapeRadios.forEach(radio => radio.addEventListener('change', draw));
 
     window.addEventListener('keydown', e => {
         switch (e.key) {
-            case 'ArrowUp': case 'w': if (direction.y === 0) direction = { x: 0, y: -1 }; e.preventDefault(); break;
-            case 'ArrowDown': case 's': if (direction.y === 0) direction = { x: 0, y: 1 }; e.preventDefault(); break;
-            case 'ArrowLeft': case 'a': if (direction.x === 0) direction = { x: -1, y: 0 }; e.preventDefault(); break;
-            case 'ArrowRight': case 'd': if (direction.x === 0) direction = { x: 1, y: 0 }; e.preventDefault(); break;
-            case 'Enter': pauseGame(); e.preventDefault(); break;
+            case 'ArrowUp': 
+            case 'w':
+                if (direction.y === 0) direction = { x: 0, y: -1 }; 
+                e.preventDefault();
+                break;
+            case 'ArrowDown': 
+            case 's': 
+                if (direction.y === 0) direction = { x: 0, y: 1 };
+                e.preventDefault();
+                break;
+            case 'ArrowLeft': 
+            case 'a':
+                if (direction.x === 0) direction = { x: -1, y: 0 }; 
+                e.preventDefault();
+                break;
+            case 'ArrowRight':
+            case 'd': 
+                if (direction.x === 0) direction = { x: 1, y: 0 }; 
+                e.preventDefault();
+                break;
+            case 'Enter': 
+                pauseGame(); 
+                e.preventDefault();
+                break;
         }
     });
 
@@ -92,10 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
         score = 0;
         spawnFood();
 
-        snakeTheme.play().catch(() => {});
+        snakeTheme.play().catch(() => console.log("Audio play prevented."));
 
         lastUpdateTime = performance.now();
-        draw(); // show initial snake & food immediately
+        draw();
         window.requestAnimationFrame(gameLoop);
     }
 
@@ -118,10 +146,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (head.y < 0) head.y = rows - 1;
             if (head.y >= rows) head.y = 0;
         } else {
-            if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) return init();
+            if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
+                init();
+                return;
+            }
         }
 
-        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) return init();
+        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+            init();
+            return;
+        }
 
         snake.unshift(head);
 
@@ -158,37 +192,42 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Snake
-        let snakeColor = currentTheme.snake || snakeColorPicker.value || "#0f0";
-        if (themeSelect.value === 'rainbow') snakeColor = `hsl(${rainbowHue}, 100%, 50%)`;
-        ctx.fillStyle = snakeColor;
+        // Pulsing factor (0.9–1.1)
+        const pulse = 1 + 0.05 * Math.sin(pulsePhase);
+        pulsePhase += 0.2;
+
+        // Snake with glow
+        ctx.shadowColor = '#0f0';
+        ctx.shadowBlur = 15;
+        ctx.fillStyle = '#0f0';
         snake.forEach(seg => {
-            const x = seg.x * scale;
-            const y = seg.y * scale;
-            ctx.fillRect(x, y, scale, scale);
+            const size = scale * pulse;
+            const offset = (scale - size) / 2;
+            ctx.fillRect(seg.x * scale + offset, seg.y * scale + offset, size, size);
             if (snakeHasOutline) {
                 ctx.strokeStyle = 'black';
                 ctx.lineWidth = 2;
-                ctx.strokeRect(x + 0.5, y + 0.5, scale - 1, scale - 1);
+                ctx.strokeRect(seg.x * scale + offset + 0.5, seg.y * scale + offset + 0.5, size - 1, size - 1);
             }
         });
 
-        // Food
-        let foodColor = '#f00';
-        if (themeSelect.value === 'rainbow') {
-            foodColor = `hsl(${(rainbowHue + 120) % 360}, 100%, 50%)`;
-            rainbowHue = (rainbowHue + 5) % 360;
-        }
-        ctx.fillStyle = currentTheme.food || foodColorPicker.value || '#f00';
-        const foodX = food.x * scale;
-        const foodY = food.y * scale;
+        // Food with glow
+        ctx.shadowColor = '#f00';
+        ctx.shadowBlur = 15;
+        ctx.fillStyle = '#f00';
+        const foodSize = scale * pulse;
+        const foodOffset = (scale - foodSize) / 2;
         const selectedShape = document.querySelector('input[name="foodShape"]:checked')?.value || 'square';
-        if (selectedShape === 'square') ctx.fillRect(foodX, foodY, scale, scale);
-        else {
+        if (selectedShape === 'square') {
+            ctx.fillRect(food.x * scale + foodOffset, food.y * scale + foodOffset, foodSize, foodSize);
+        } else {
             ctx.beginPath();
-            ctx.arc(foodX + scale/2, foodY + scale/2, scale/2, 0, Math.PI*2);
+            ctx.arc(food.x * scale + scale / 2, food.y * scale + scale / 2, foodSize / 2, 0, Math.PI*2);
             ctx.fill();
         }
+
+        // Remove shadows for text
+        ctx.shadowBlur = 0;
 
         // Scores
         ctx.fillStyle = '#fff';
