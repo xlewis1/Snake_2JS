@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const themes = {
         default: { bg: '#111', snake: '#0f0', food: '#f00', grid: '#333', scoreColor: '#fff', highScoreColor: 'yellow' },
         neon: { bg: '#030003', snake: '#0f0', food: '#f00', grid: '#005577', scoreColor: '#fff', highScoreColor: 'yellow' },
-        rainbow: { bg: '#fff', snake: null, food: null, grid: '#444', scoreColor: '#000', highScoreColor: '#000' },
-        nokia: { bg: '#C0FFC0', snake: '#000000', food: '#000000', grid: null, scoreColor: '#000', highScoreColor: '#000' }   
+        rainbow: { bg: '#fff', snake: 'rainbow', food: 'rainbow', grid: '#444', scoreColor: '#000', highScoreColor: '#000' },
+        nokia: { bg: '#C0FFC0', snake: '#000000', food: '#000000', grid: '#333', scoreColor: '#000', highScoreColor: '#000' }   
     };
 
     let snake = [];
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let snakeHasOutline = outlineToggle.checked;
     let isMuted = false;
     let currentTheme = themes.default;
-    let pulsePhase = 0; // For neon pulse
+    let pulsePhase = 0;
     let lastUpdateTime = 0;
 
     // --- Event Listeners ---
@@ -143,20 +143,38 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Pulsing only for Neon
+        // Neon pulse
         let pulse = 1;
         if (themeSelect.value === 'neon') {
             pulse = 1 + 0.05 * Math.sin(pulsePhase);
             pulsePhase += 0.2;
+            ctx.shadowColor = '#0f0';
+            ctx.shadowBlur = 15;
+        } else {
+            ctx.shadowBlur = 0;
         }
 
-        // Snake
-        if (themeSelect.value === 'neon') ctx.shadowColor = '#0f0', ctx.shadowBlur = 15;
-        ctx.fillStyle = currentTheme.snake || snakeColorPicker.value || '#0f0';
-        snake.forEach(seg => {
+        // Snake drawing
+        snake.forEach((seg, i) => {
             const size = scale * pulse;
             const offset = (scale - size) / 2;
+
+            if (currentTheme.snake === 'rainbow') {
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+                gradient.addColorStop(0, 'red');
+                gradient.addColorStop(0.17, 'orange');
+                gradient.addColorStop(0.34, 'yellow');
+                gradient.addColorStop(0.51, 'green');
+                gradient.addColorStop(0.68, 'blue');
+                gradient.addColorStop(0.85, 'indigo');
+                gradient.addColorStop(1, 'violet');
+                ctx.fillStyle = gradient;
+            } else {
+                ctx.fillStyle = currentTheme.snake;
+            }
+
             ctx.fillRect(seg.x * scale + offset, seg.y * scale + offset, size, size);
+
             if (snakeHasOutline) {
                 ctx.strokeStyle = 'black';
                 ctx.lineWidth = 2;
@@ -164,16 +182,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Food
-        if (themeSelect.value === 'neon') ctx.shadowColor = '#f00', ctx.shadowBlur = 15;
-        ctx.fillStyle = currentTheme.food || foodColorPicker.value || '#f00';
+        // Food drawing
+        if (themeSelect.value === 'neon') {
+            ctx.shadowColor = '#f00';
+            ctx.shadowBlur = 15;
+        } else {
+            ctx.shadowBlur = 0;
+        }
+
         const foodSize = scale * pulse;
         const foodOffset = (scale - foodSize) / 2;
         const selectedShape = document.querySelector('input[name="foodShape"]:checked')?.value || 'square';
-        if (selectedShape === 'square') ctx.fillRect(food.x * scale + foodOffset, food.y * scale + foodOffset, foodSize, foodSize);
-        else { ctx.beginPath(); ctx.arc(food.x * scale + scale/2, food.y * scale + scale/2, foodSize/2, 0, Math.PI*2); ctx.fill(); }
 
-        ctx.shadowBlur = 0; // remove shadow for text
+        if (currentTheme.food === 'rainbow') {
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            gradient.addColorStop(0, 'red');
+            gradient.addColorStop(0.17, 'orange');
+            gradient.addColorStop(0.34, 'yellow');
+            gradient.addColorStop(0.51, 'green');
+            gradient.addColorStop(0.68, 'blue');
+            gradient.addColorStop(0.85, 'indigo');
+            gradient.addColorStop(1, 'violet');
+            ctx.fillStyle = gradient;
+        } else {
+            ctx.fillStyle = currentTheme.food;
+        }
+
+        if (selectedShape === 'square') {
+            ctx.fillRect(food.x * scale + foodOffset, food.y * scale + foodOffset, foodSize, foodSize);
+        } else {
+            ctx.beginPath();
+            ctx.arc(food.x * scale + scale / 2, food.y * scale + scale / 2, foodSize / 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.shadowBlur = 0;
 
         // Scores
         ctx.fillStyle = currentTheme.scoreColor;
