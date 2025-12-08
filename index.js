@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     foodShapeRadios.forEach(radio => radio.addEventListener('change', draw));
     
     const scale = 25;
-    const rows = canvas.height / scale;
-    const columns = canvas.width / scale;
+    const rows = Math.floor(canvas.height / scale);
+    const columns = Math.floor(canvas.width / scale);
 
     let snake = [];
     let snakeLength = 3;
