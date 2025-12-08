@@ -110,8 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'right': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
             }
         });
-        btn.addEventListener('click', move);
-        btn.addEventListener('touchstart', move);
     });
 
     // --- Game Functions ---
