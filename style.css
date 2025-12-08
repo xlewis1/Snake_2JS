@@ -91,6 +91,7 @@ canvas {
     color: #000;
     cursor: pointer;
     user-select: none;
+    touch-action: manipulation;
 }
 
 .touch-btn:active {
