@@ -4,6 +4,7 @@ body {
     background: #222;
     color: #fff;
     text-align: center;
+    touch-action: pan-x pan-y;
 }
 
 .game-title {
