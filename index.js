@@ -40,75 +40,44 @@ document.addEventListener('DOMContentLoaded', () => {
     let snakeHasOutline = outlineToggle.checked;
     let isMuted = false;
     let currentTheme = themes.default;
-    let pulsePhase = 0; // for pulse animation
+    let pulsePhase = 0; // For neon pulse
     let lastUpdateTime = 0;
 
     // --- Event Listeners ---
-    toggleSidebarBtn.addEventListener('click', () => {
-        sidebarContent.classList.toggle('show');
-    });
-
+    toggleSidebarBtn.addEventListener('click', () => sidebarContent.classList.toggle('show'));
     pauseBtn.addEventListener('click', () => pauseGame());
     muteBtn.addEventListener('click', () => {
         isMuted = !isMuted;
         snakeTheme.muted = isMuted;
         muteBtn.textContent = isMuted ? 'Unmute' : 'Mute';
     });
-
-    speedSlider.addEventListener('input', () => {
-        currentSpeed = parseInt(speedSlider.value, 10);
-    });
-
-    outlineToggle.addEventListener("change", () => {
-        snakeHasOutline = outlineToggle.checked;
-    });
-
-    themeSelect.addEventListener('change', () => {
-        currentTheme = themes[themeSelect.value];
-        draw();
-    });
-
+    speedSlider.addEventListener('input', () => currentSpeed = parseInt(speedSlider.value, 10));
+    outlineToggle.addEventListener("change", () => snakeHasOutline = outlineToggle.checked);
+    themeSelect.addEventListener('change', () => { currentTheme = themes[themeSelect.value]; draw(); });
     foodColorPicker.addEventListener('input', draw);
     foodShapeRadios.forEach(radio => radio.addEventListener('change', draw));
 
     window.addEventListener('keydown', e => {
         switch (e.key) {
-            case 'ArrowUp': 
-            case 'w':
-                if (direction.y === 0) direction = { x: 0, y: -1 }; 
-                e.preventDefault();
-                break;
-            case 'ArrowDown': 
-            case 's': 
-                if (direction.y === 0) direction = { x: 0, y: 1 };
-                e.preventDefault();
-                break;
-            case 'ArrowLeft': 
-            case 'a':
-                if (direction.x === 0) direction = { x: -1, y: 0 }; 
-                e.preventDefault();
-                break;
+            case 'ArrowUp':
+            case 'w': if (direction.y === 0) direction = { x: 0, y: -1 }; e.preventDefault(); break;
+            case 'ArrowDown':
+            case 's': if (direction.y === 0) direction = { x: 0, y: 1 }; e.preventDefault(); break;
+            case 'ArrowLeft':
+            case 'a': if (direction.x === 0) direction = { x: -1, y: 0 }; e.preventDefault(); break;
             case 'ArrowRight':
-            case 'd': 
-                if (direction.x === 0) direction = { x: 1, y: 0 }; 
-                e.preventDefault();
-                break;
-            case 'Enter': 
-                pauseGame(); 
-                e.preventDefault();
-                break;
+            case 'd': if (direction.x === 0) direction = { x: 1, y: 0 }; e.preventDefault(); break;
+            case 'Enter': pauseGame(); e.preventDefault(); break;
         }
     });
 
     touchBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const dir = btn.dataset.dir;
-            switch (dir) {
-                case 'up': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
-                case 'down': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
-                case 'left': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
-                case 'right': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
-            }
+            if (dir === 'up' && direction.y === 0) direction = { x: 0, y: -1 };
+            if (dir === 'down' && direction.y === 0) direction = { x: 0, y: 1 };
+            if (dir === 'left' && direction.x === 0) direction = { x: -1, y: 0 };
+            if (dir === 'right' && direction.x === 0) direction = { x: 1, y: 0 };
         });
     });
 
@@ -119,9 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         direction = { x: 1, y: 0 };
         score = 0;
         spawnFood();
-
         snakeTheme.play().catch(() => console.log("Audio play prevented."));
-
         lastUpdateTime = performance.now();
         draw();
         window.requestAnimationFrame(gameLoop);
@@ -145,32 +112,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (head.x >= columns) head.x = 0;
             if (head.y < 0) head.y = rows - 1;
             if (head.y >= rows) head.y = 0;
-        } else {
-            if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
-                init();
-                return;
-            }
-        }
-
-        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+        } else if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
             init();
             return;
         }
 
+        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) { init(); return; }
         snake.unshift(head);
 
         if (head.x === food.x && head.y === food.y) {
             score++;
             spawnFood();
-            if (score > highScore) {
-                highScore = score;
-                localStorage.setItem('HighScore', highScore);
-            }
+            if (score > highScore) { highScore = score; localStorage.setItem('HighScore', highScore); }
         } else snake.pop();
     }
 
     function draw() {
-        // Background
         ctx.fillStyle = currentTheme.bg;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -179,27 +136,23 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.strokeStyle = currentTheme.grid;
             ctx.lineWidth = 0.5;
             for (let i = 0; i <= columns; i++) {
-                ctx.beginPath();
-                ctx.moveTo(i * scale, 0);
-                ctx.lineTo(i * scale, canvas.height);
-                ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(i * scale, 0); ctx.lineTo(i * scale, canvas.height); ctx.stroke();
             }
             for (let j = 0; j <= rows; j++) {
-                ctx.beginPath();
-                ctx.moveTo(0, j * scale);
-                ctx.lineTo(canvas.width, j * scale);
-                ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, j * scale); ctx.lineTo(canvas.width, j * scale); ctx.stroke();
             }
         }
 
-        // Pulsing factor (0.9–1.1)
-        const pulse = 1 + 0.05 * Math.sin(pulsePhase);
-        pulsePhase += 0.2;
+        // Pulsing only for Neon
+        let pulse = 1;
+        if (themeSelect.value === 'neon') {
+            pulse = 1 + 0.05 * Math.sin(pulsePhase);
+            pulsePhase += 0.2;
+        }
 
-        // Snake with glow
-        ctx.shadowColor = '#0f0';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#0f0';
+        // Snake
+        if (themeSelect.value === 'neon') ctx.shadowColor = '#0f0', ctx.shadowBlur = 15;
+        ctx.fillStyle = currentTheme.snake || snakeColorPicker.value || '#0f0';
         snake.forEach(seg => {
             const size = scale * pulse;
             const offset = (scale - size) / 2;
@@ -211,25 +164,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Food with glow
-        ctx.shadowColor = '#f00';
-        ctx.shadowBlur = 15;
-        ctx.fillStyle = '#f00';
+        // Food
+        if (themeSelect.value === 'neon') ctx.shadowColor = '#f00', ctx.shadowBlur = 15;
+        ctx.fillStyle = currentTheme.food || foodColorPicker.value || '#f00';
         const foodSize = scale * pulse;
         const foodOffset = (scale - foodSize) / 2;
         const selectedShape = document.querySelector('input[name="foodShape"]:checked')?.value || 'square';
-        if (selectedShape === 'square') {
-            ctx.fillRect(food.x * scale + foodOffset, food.y * scale + foodOffset, foodSize, foodSize);
-        } else {
-            ctx.beginPath();
-            ctx.arc(food.x * scale + scale / 2, food.y * scale + scale / 2, foodSize / 2, 0, Math.PI*2);
-            ctx.fill();
-        }
+        if (selectedShape === 'square') ctx.fillRect(food.x * scale + foodOffset, food.y * scale + foodOffset, foodSize, foodSize);
+        else { ctx.beginPath(); ctx.arc(food.x * scale + scale/2, food.y * scale + scale/2, foodSize/2, 0, Math.PI*2); ctx.fill(); }
 
-        // Remove shadows for text
-        ctx.shadowBlur = 0;
+        ctx.shadowBlur = 0; // remove shadow for text
 
-        // Scores with theme-specific color
+        // Scores
         ctx.fillStyle = currentTheme.scoreColor;
         ctx.font = '20px Arial';
         ctx.fillText(`Score: ${score}`, 10, 25);
