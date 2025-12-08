@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
     snakeTheme.loop = true;
 
     const scale = 25;
-    const rows = canvas.height / scale;
-    const columns = canvas.width / scale;
+    const rows = Math.floor(canvas.height / scale);
+    const columns = Math.floor(canvas.width / scale);
 
     const themes = {
         default: { bg: '#111', snake: '#0f0', food: '#f00', grid: '#333' },
         neon: { bg: '#030003', snake: '#00ffdd', food: '#ff00aa', grid: '#005577' },
         rainbow: { bg: '#fff', snake: null, food: null, grid: '#444' },
-        nokia: {bg: '#C0FFC0', snake: '#000000', food: '#000000', grid: null}   
+        nokia: { bg: '#C0FFC0', snake: '#000000', food: '#000000', grid: null }
     };
 
     let snake = [];
@@ -44,59 +44,31 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastUpdateTime = 0;
 
     // --- Event Listeners ---
-    toggleSidebarBtn.addEventListener('click', () => {
-        sidebarContent.classList.toggle('show');
-    });
+    toggleSidebarBtn.addEventListener('click', () => sidebarContent.classList.toggle('show'));
 
-    pauseBtn.addEventListener('click', () => pauseGame());
+    pauseBtn.addEventListener('click', pauseGame);
     muteBtn.addEventListener('click', () => {
         isMuted = !isMuted;
         snakeTheme.muted = isMuted;
         muteBtn.textContent = isMuted ? 'Unmute' : 'Mute';
     });
 
-    speedSlider.addEventListener('input', () => {
-        currentSpeed = parseInt(speedSlider.value, 10);
-    });
-
-    outlineToggle.addEventListener("change", () => {
-        snakeHasOutline = outlineToggle.checked;
-    });
-
+    speedSlider.addEventListener('input', () => currentSpeed = parseInt(speedSlider.value, 10));
+    outlineToggle.addEventListener("change", () => snakeHasOutline = outlineToggle.checked);
     themeSelect.addEventListener('change', () => {
         currentTheme = themes[themeSelect.value];
         draw();
     });
-
     foodColorPicker.addEventListener('input', draw);
     foodShapeRadios.forEach(radio => radio.addEventListener('change', draw));
 
     window.addEventListener('keydown', e => {
         switch (e.key) {
-            case 'ArrowUp': 
-            case 'w':
-                if (direction.y === 0) direction = { x: 0, y: -1 }; 
-                e.preventDefault();
-                break;
-            case 'ArrowDown': 
-            case 's': 
-                if (direction.y === 0) direction = { x: 0, y: 1 };
-                e.preventDefault();
-                break;
-            case 'ArrowLeft': 
-            case 'a':
-                if (direction.x === 0) direction = { x: -1, y: 0 }; 
-                e.preventDefault();
-                break;
-            case 'ArrowRight':
-            case 'd': 
-                if (direction.x === 0) direction = { x: 1, y: 0 }; 
-                e.preventDefault();
-                break;
-            case 'Enter': 
-                pauseGame(); 
-                e.preventDefault();
-                break;
+            case 'ArrowUp': case 'w': if (direction.y === 0) direction = { x: 0, y: -1 }; e.preventDefault(); break;
+            case 'ArrowDown': case 's': if (direction.y === 0) direction = { x: 0, y: 1 }; e.preventDefault(); break;
+            case 'ArrowLeft': case 'a': if (direction.x === 0) direction = { x: -1, y: 0 }; e.preventDefault(); break;
+            case 'ArrowRight': case 'd': if (direction.x === 0) direction = { x: 1, y: 0 }; e.preventDefault(); break;
+            case 'Enter': pauseGame(); e.preventDefault(); break;
         }
     });
 
@@ -120,10 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
         score = 0;
         spawnFood();
 
-        snakeTheme.play().catch(() => console.log("Audio play prevented."));
+        snakeTheme.play().catch(() => {});
 
         lastUpdateTime = performance.now();
-        draw();
+        draw(); // show initial snake & food immediately
         window.requestAnimationFrame(gameLoop);
     }
 
@@ -146,16 +118,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (head.y < 0) head.y = rows - 1;
             if (head.y >= rows) head.y = 0;
         } else {
-            if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
-                init();
-                return;
-            }
+            if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) return init();
         }
 
-        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
-            init();
-            return;
-        }
+        if (snake.some(seg => seg.x === head.x && seg.y === head.y)) return init();
 
         snake.unshift(head);
 
