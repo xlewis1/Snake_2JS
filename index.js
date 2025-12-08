@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const themes = {
         default: { bg: '#111', snake: '#0f0', food: '#f00', grid: '#333' },
         neon: { bg: '#030003', snake: '#00ffdd', food: '#ff00aa', grid: '#005577' },
-        rainbow: { bg: '#000', snake: null, food: null, grid: '#444' },
-        nokia: { bg: '#000', snake: '#0a0', food: '#0a0', grid: null }
+        rainbow: { bg: '#fff', snake: null, food: null, grid: '#444' },
+        nokia: {bg: '#B0DOAO', snake: '#000000', food: '#000000', grid: null}   
     };
 
     let snake = [];
@@ -73,11 +73,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('keydown', e => {
         switch (e.key) {
-            case 'ArrowUp': case 'w': if (direction.y === 0) direction = { x: 0, y: -1 }; break;
-            case 'ArrowDown': case 's': if (direction.y === 0) direction = { x: 0, y: 1 }; break;
-            case 'ArrowLeft': case 'a': if (direction.x === 0) direction = { x: -1, y: 0 }; break;
-            case 'ArrowRight': case 'd': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
-            case 'Enter': pauseGame(); break;
+            case 'ArrowUp': 
+            case 'w':
+                if (direction.y === 0) direction = { x: 0, y: -1 }; 
+                e.preventDefault();
+                break;
+            case 'ArrowDown': 
+            case 's': 
+                if (direction.y === 0) direction = { x: 0, y: 1 };
+                e.preventDefault();
+                break;
+            case 'ArrowLeft': 
+            case 'a':
+                if (direction.x === 0) direction = { x: -1, y: 0 }; 
+                e.preventDefault();
+                break;
+            case 'ArrowRight':
+            case 'd': 
+                if (direction.x === 0) direction = { x: 1, y: 0 }; 
+                e.preventDefault();
+                break;
+            case 'Enter': 
+                pauseGame(); 
+                e.preventDefault();
+                break;
         }
     });
 
