@@ -23,10 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const columns = canvas.width / scale;
 
     const themes = {
-        default: { bg: '#111', snake: '#0f0', food: '#f00', grid: '#333' },
-        neon: { bg: '#030003', snake: '#0f0', food: '#f00', grid: '#005577' },
-        rainbow: { bg: '#fff', snake: null, food: null, grid: '#444' },
-        nokia: {bg: '#C0FFC0', snake: '#000000', food: '#000000', grid: null}   
+        default: { bg: '#111', snake: '#0f0', food: '#f00', grid: '#333', scoreColor: '#fff', highScoreColor: 'yellow' },
+        neon: { bg: '#030003', snake: '#0f0', food: '#f00', grid: '#005577', scoreColor: '#fff', highScoreColor: 'yellow' },
+        rainbow: { bg: '#fff', snake: null, food: null, grid: '#444', scoreColor: '#000', highScoreColor: '#000' },
+        nokia: { bg: '#C0FFC0', snake: '#000000', food: '#000000', grid: null, scoreColor: '#000', highScoreColor: '#000' }   
     };
 
     let snake = [];
@@ -229,11 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Remove shadows for text
         ctx.shadowBlur = 0;
 
-        // Scores
-        ctx.fillStyle = '#fff';
+        // Scores with theme-specific color
+        ctx.fillStyle = currentTheme.scoreColor;
         ctx.font = '20px Arial';
         ctx.fillText(`Score: ${score}`, 10, 25);
-        ctx.fillStyle = 'yellow';
+        ctx.fillStyle = currentTheme.highScoreColor;
         ctx.textAlign = 'right';
         ctx.fillText(`High Score: ${highScore}`, canvas.width - 10, 25);
         ctx.textAlign = 'start';
