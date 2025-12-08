@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Snake
-        let snakeColor = currentTheme.snake || snakeColorPicker.value;
+        let snakeColor = currentTheme.snake || snakeColorPicker.value || "#0f0';
         if (themeSelect.value === 'rainbow') snakeColor = `hsl(${rainbowHue}, 100%, 50%)`;
         ctx.fillStyle = snakeColor;
         snake.forEach(seg => {
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
             foodColor = `hsl(${(rainbowHue + 120) % 360}, 100%, 50%)`;
             rainbowHue = (rainbowHue + 5) % 360;
         }
-        ctx.fillStyle = currentTheme.food || foodColorPicker.value || foodColor;
+        ctx.fillStyle = currentTheme.food || foodColorPicker.value || '#f00';
         const foodX = food.x * scale;
         const foodY = food.y * scale;
         const selectedShape = document.querySelector('input[name="foodShape"]:checked')?.value || 'square';
