@@ -15,6 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const snakeTheme = new Audio('snaketheme.mp3');
     snakeTheme.loop = true;
     const muteBtn = document.getElementById('muteBtn');
+    const themeSelect = document.getElementById('themeSelect');
+
+    const themes = {
+      default: { bg: '#111', snake: '#0f0', food: '#f00', grid: '#333' },
+      neon: { bg: '#030003', snake: '#00ffdd', food: '#ff00aa', grid: '#005577' },
+      rainbow: { bg: '#000', snake: null, food: null, grid: '#444' },
+      nokia: { bg: '#000', snake: '#0a0', food: '#0a0', grid: null }
+    };
 
     foodColorPicker.addEventListener('input', draw);
     foodShapeRadios.forEach(radio => radio.addEventListener('change', draw));
@@ -34,6 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentSpeed = parseInt(speedSlider.value, 10);
     let snakeHasOutline = outlineToggle.checked;
     let isMuted = false;
+    let currentTheme = themes.default;
+    let rainbowHue = 0;
 
     // --- Sidebar toggle ---
     toggleSidebarBtn.addEventListener('click', () => {
@@ -64,6 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener("gamepadconnected", (e) => {
     console.log("Gamepad connected:", e.gamepad.id);
   });
+
+    themeSelect.addEventListener('change', () => {
+  currentTheme = themes[themeSelect.value];
+  draw(); // immediately redraw with new theme
+});
 
     // --- Game init ---
     function init() {
@@ -160,8 +175,11 @@ function pollGamePads() {
 }
 
     function draw() {
-        ctx.fillStyle = '#111';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+       ctx.fillStyle = currentTheme.bg;  // background
+       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const foodX = food.x * scale;
+      const foodY = food.y * scale;
+      const selectedShape = document.querySelector('input[name="foodShape"]:checked').value;
 
         // grid
         if (gridToggle.checked) {
@@ -180,38 +198,33 @@ function pollGamePads() {
             }
         }
 
-        // snake
-        ctx.fillStyle = snakeColorPicker.value || defaultSnakeColor;
+    let snakeColor = currentTheme.snake || snakeColorPicker.value;
+    if(themeSelect.value === 'rainbow') {
+        snakeColor = `hsl(${rainbowHue}, 100%, 50%)`;
+    }    
 
-        
-       snake.forEach(seg => {
-            const x = seg.x * scale;
-            const y = seg.y * scale;
+    ctx.fillStyle = snakeColor;
+    snake.forEach(seg => {
+        const x = seg.x * scale;
+        const y = seg.y * scale;
+        ctx.fillRect(x, y, scale, scale);
+        if (outlineToggle.checked) {
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x + 0.5, y + 0.5, scale - 1, scale - 1);
+        }
+    });
 
-           // fill
-           ctx.fillRect(x, y, scale, scale);
+        let foodColor = currentTheme.food || foodColorPicker.value;
+        if(themeSelect.value === 'rainbow') {
+            foodColor = `hsl(${(rainbowHue + 120) % 360}, 100%, 50%)`;
+         }
+         ctx.fillStyle = foodColor;
+         if(selectedShape === 'square') ctx.fillRect(foodX, foodY, scale, scale);
+         else ctx.beginPath(), ctx.arc(foodX + scale/2, foodY + scale/2, scale/2, 0, Math.PI*2), ctx.fill();
 
-           // outline (only if toggle is ON)
-           if (outlineToggle.checked) {
-               ctx.strokeStyle = "black";
-               ctx.lineWidth = 2;
-               ctx.strokeRect(x + 0.5, y + 0.5, scale - 1, scale - 1);
-            }
-         });
-
-        // food
-      const foodX = food.x * scale;
-      const foodY = food.y * scale;
-      const selectedShape = document.querySelector('input[name="foodShape"]:checked').value;
-      ctx.fillStyle = document.getElementById('foodColor').value || '#f00';
-
-      if (selectedShape === 'square') {
-          ctx.fillRect(foodX, foodY, scale, scale);
-      } else if (selectedShape === 'circle') {
-          ctx.beginPath();
-          ctx.arc(foodX + scale/2, foodY + scale/2, scale/2, 0, Math.PI * 2);
-          ctx.fill();
-      }
+         if(themeSelect.value === 'rainbow') rainbowHue = (rainbowHue + 5) % 360;
+     }
 
         // score
         ctx.fillStyle = '#fff';
