@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         default: { bg: '#111', snake: '#0f0', food: '#f00', grid: '#333' },
         neon: { bg: '#030003', snake: '#00ffdd', food: '#ff00aa', grid: '#005577' },
         rainbow: { bg: '#fff', snake: null, food: null, grid: '#444' },
-        nokia: {bg: '#B0D0A0', snake: '#000000', food: '#000000', grid: null}   
+        nokia: {bg: '#C0FFC0', snake: '#000000', food: '#000000', grid: null}   
     };
 
     let snake = [];
@@ -110,6 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'right': if (direction.x === 0) direction = { x: 1, y: 0 }; break;
             }
         });
+        btn.addEventListener('click', move);
+        btn.addEventListener('touchstart', move);
     });
 
     // --- Game Functions ---
