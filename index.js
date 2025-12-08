@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     snakeTheme.loop = true;
 
     const scale = 25;
-    const rows = Math.floor(canvas.height / scale);
-    const columns = Math.floor(canvas.width / scale);
+    const rows = canvas.height / scale;
+    const columns = canvas.width / scale;
 
     const themes = {
         default: { bg: '#111', snake: '#0f0', food: '#f00', grid: '#333' },
